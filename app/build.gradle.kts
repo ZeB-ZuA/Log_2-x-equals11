@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.udistrital.log_2xequals11"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -50,7 +50,8 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.navigation:navigation-compose:2.5.0-alpha01")
+    implementation("androidx.compose.material:material-icons-extended:1.6.5")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -59,6 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
