@@ -1,5 +1,6 @@
 package com.udistrital.log_2xequals11.Views
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -7,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,16 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.udistrital.log_2xequals11.Logic.Board
-import com.udistrital.log_2xequals11.Logic.Tile
 
 
-
-
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun GameScreen(navController: NavController) {
-    val board = remember {
-        mutableStateOf(Board())
-    }
+    val board = mutableStateOf(Board())
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -47,7 +43,7 @@ fun GameScreen(navController: NavController) {
 
 @Composable
 fun Directions(boardState: MutableState<Board>) {
-    var board = boardState.value
+
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -63,16 +59,32 @@ fun Directions(boardState: MutableState<Board>) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = { }) {
+            Button(onClick = {
+                val newBoard = boardState.value.copy()
+                newBoard.moveUp()
+                boardState.value = newBoard
+            }) {
+
+
                 Text("ARRIBA")
             }
 
-            Button(onClick = { }) {
+            Button(onClick = {
+                val newBoard = boardState.value.copy()
+                newBoard.moveDown()
+                boardState.value = newBoard
+            }) {
+
                 Text("ABAJO")
             }
         }
 
-        Button(onClick = { }) {
+        Button(onClick = {
+            val newBoard = boardState.value.copy()
+            newBoard.moveRight()
+            boardState.value = newBoard
+        }) {
+
             Text("DERECHA")
         }
     }
