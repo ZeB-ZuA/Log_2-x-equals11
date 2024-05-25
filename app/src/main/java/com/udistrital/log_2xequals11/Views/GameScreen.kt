@@ -16,12 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.udistrital.log_2xequals11.Logic.Board
+import com.udistrital.log_2xequals11.Service.BoardService
 
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun GameScreen(navController: NavController) {
     val board = mutableStateOf(Board())
+    val boardService = BoardService()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -31,6 +33,7 @@ fun GameScreen(navController: NavController) {
             val newBoard = Board()
             newBoard.start()
             board.value = newBoard
+            boardService.save(board.value)
         }) {
             Text("RESTART")
         }
@@ -43,6 +46,7 @@ fun GameScreen(navController: NavController) {
 
 @Composable
 fun Directions(boardState: MutableState<Board>) {
+     val boardService = BoardService()
 
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
@@ -51,6 +55,7 @@ fun Directions(boardState: MutableState<Board>) {
             val newBoard = boardState.value.copy()
             newBoard.moveLeft()
             boardState.value = newBoard
+            boardService.save(boardState.value)
 
         }) {
             Text("IZQUIERDA")
@@ -63,6 +68,7 @@ fun Directions(boardState: MutableState<Board>) {
                 val newBoard = boardState.value.copy()
                 newBoard.moveUp()
                 boardState.value = newBoard
+                boardService.save(boardState.value)
             }) {
 
 
@@ -73,6 +79,7 @@ fun Directions(boardState: MutableState<Board>) {
                 val newBoard = boardState.value.copy()
                 newBoard.moveDown()
                 boardState.value = newBoard
+                boardService.save(boardState.value)
             }) {
 
                 Text("ABAJO")
@@ -83,6 +90,7 @@ fun Directions(boardState: MutableState<Board>) {
             val newBoard = boardState.value.copy()
             newBoard.moveRight()
             boardState.value = newBoard
+            boardService.save(boardState.value)
         }) {
 
             Text("DERECHA")
