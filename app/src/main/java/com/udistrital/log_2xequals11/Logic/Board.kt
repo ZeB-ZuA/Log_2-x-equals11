@@ -1,11 +1,50 @@
 package com.udistrital.log_2xequals11.Logic
+
+import com.google.firebase.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
+import com.google.firebase.database.getValue
+
+
 class Board(val size: Int = 4) {
-    var board: Array<Array<Tile>> = Array(size) { Array(size) { Tile() } }
+    var board: MutableList<MutableList<Tile>> = MutableList(size) { MutableList(size) { Tile() } }
 
     init {
-        addNewNumber()
-        addNewNumber()
+        getBoardFromFirebase()
+        
     }
+
+
+    fun getBoardFromFirebase() {
+        try {
+            val database = Firebase.database
+            val myRef = database.getReference("boards")
+
+            val boardListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val firebaseBoard = dataSnapshot.getValue<List<List<Tile>>>()
+                    println("Tablero de Firebase: $firebaseBoard")
+                    if (firebaseBoard != null) {
+                        refreshBoard(firebaseBoard)
+                        println()
+                    } else {
+                        println("El tablero de Firebase está vacío.")
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    println("Error al leer el tablero de Firebase: ${databaseError.toException()}")
+                }
+            }
+            myRef.addValueEventListener(boardListener)
+        } catch (e: Exception) {
+            println("Ocurrió un error al obtener el tablero de Firebase: ${e.message}")
+        }
+    }
+
 
     fun start() {
         for (i in 0 until size) {
@@ -16,8 +55,8 @@ class Board(val size: Int = 4) {
         println("START/RESTART")
         addNewNumber()
         addNewNumber()
-
     }
+
 
     private fun addNewNumber() {
         val emptyCells = mutableListOf<Pair<Int, Int>>()
@@ -35,8 +74,8 @@ class Board(val size: Int = 4) {
         }
     }
 
-    private fun compress(board: Array<Array<Tile>>): Array<Array<Tile>> {
-        val newBoard = Array(size) { Array(size) { Tile() } }
+    private fun compress(board: List<List<Tile>>): List<List<Tile>> {
+        val newBoard = MutableList(size) { MutableList(size) { Tile() } }
         for (i in 0 until size) {
             var pos = 0
             for (j in 0 until size) {
@@ -49,20 +88,21 @@ class Board(val size: Int = 4) {
         return newBoard
     }
 
-    private fun merge(board: Array<Array<Tile>>): Array<Array<Tile>> {
+    private fun merge(board: List<List<Tile>>): List<List<Tile>> {
+        val newBoard = board.map { it.toMutableList() }
         for (i in 0 until size) {
             for (j in 0 until size - 1) {
-                if (board[i][j].value != 0 && board[i][j].value == board[i][j + 1].value) {
-                    board[i][j].value *= 2
-                    board[i][j + 1] = Tile()
+                if (newBoard[i][j].value != 0 && newBoard[i][j].value == newBoard[i][j + 1].value) {
+                    newBoard[i][j].value *= 2
+                    newBoard[i][j + 1] = Tile()
                 }
             }
         }
-        return board
+        return newBoard
     }
 
-    private fun reverse(board: Array<Array<Tile>>): Array<Array<Tile>> {
-        val newBoard = Array(size) { Array(size) { Tile() } }
+    private fun reverse(board: List<List<Tile>>): List<List<Tile>> {
+        val newBoard = MutableList(size) { MutableList(size) { Tile() } }
         for (i in 0 until size) {
             for (j in 0 until size) {
                 newBoard[i][j] = board[i][size - 1 - j]
@@ -71,8 +111,8 @@ class Board(val size: Int = 4) {
         return newBoard
     }
 
-    private fun transpose(board: Array<Array<Tile>>): Array<Array<Tile>> {
-        val newBoard = Array(size) { Array(size) { Tile() } }
+    private fun transpose(board: List<List<Tile>>): List<List<Tile>> {
+        val newBoard = MutableList(size) { MutableList(size) { Tile() } }
         for (i in 0 until size) {
             for (j in 0 until size) {
                 newBoard[i][j] = board[j][i]
@@ -87,6 +127,7 @@ class Board(val size: Int = 4) {
         }
         println()
     }
+
     fun copy(): Board {
         val newBoard = Board()
         for (i in 0 until size) {
@@ -96,6 +137,7 @@ class Board(val size: Int = 4) {
         }
         return newBoard
     }
+
     fun moveLeft() {
         var tempBoard = compress(board)
         tempBoard = merge(tempBoard)
@@ -144,11 +186,20 @@ class Board(val size: Int = 4) {
         printBoard()
     }
 
-    fun refreshBoard(tempBoard: Array<Array<Tile>>) {
+    fun refreshBoard(tempBoard: List<List<Tile>>) {
+        println("Refrescando el tablero...")
         for (i in board.indices) {
             for (j in board[i].indices) {
                 board[i][j] = tempBoard[i][j]
+                println("Nuevo valor: ${board[i][j].value}")
             }
         }
+        println("Tablero refrescado.")
     }
+
+    fun toList(): List<List<Tile>> {
+        return board
+    }
+
+
 }
