@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "373128407011",
+    "project_id": "log2xequals11",
+    "storage_bucket": "log2xequals11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373128407011:android:642424d3a4caf075c322d6",
+        "android_client_info": {
+          "package_name": "com.udistrital.log_2xequals11"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtQhZB35ysvM8tB2w6026pc4iSQjsfxTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
