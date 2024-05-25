@@ -151,5 +151,4 @@ class Board(val size: Int = 4) {
             }
         }
     }
-
 }

@@ -16,9 +16,4 @@ fun AppNav(){
             GameScreen(navController = navController)
         }
     }
-    
-    
-    
-    
-    
 }
