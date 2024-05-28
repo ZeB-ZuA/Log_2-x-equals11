@@ -1,5 +1,7 @@
 package com.udistrital.log_2xequals11.Logic
 
+import android.widget.Toast
+import androidx.compose.material3.AlertDialog
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -12,39 +14,10 @@ import com.google.firebase.database.getValue
 
 class Board(val size: Int = 4) {
     var board: MutableList<MutableList<Tile>> = MutableList(size) { MutableList(size) { Tile() } }
-
+    var score: Int = 0
     init {
-        getBoardFromFirebase()
         
     }
-
-
-    fun getBoardFromFirebase() {
-        try {
-            val database = Firebase.database
-            val myRef = database.getReference("boards")
-
-            val boardListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val firebaseBoard = dataSnapshot.getValue<List<List<Tile>>>()
-                    println("Tablero de Firebase: $firebaseBoard")
-                    if (firebaseBoard != null) {
-                        refreshBoard(firebaseBoard)
-                        println()
-                    } else {
-                        println("El tablero de Firebase está vacío.")
-                    }
-                }
-                override fun onCancelled(databaseError: DatabaseError) {
-                    println("Error al leer el tablero de Firebase: ${databaseError.toException()}")
-                }
-            }
-            myRef.addValueEventListener(boardListener)
-        } catch (e: Exception) {
-            println("Ocurrió un error al obtener el tablero de Firebase: ${e.message}")
-        }
-    }
-
 
     fun start() {
         for (i in 0 until size) {
@@ -95,6 +68,7 @@ class Board(val size: Int = 4) {
                 if (newBoard[i][j].value != 0 && newBoard[i][j].value == newBoard[i][j + 1].value) {
                     newBoard[i][j].value *= 2
                     newBoard[i][j + 1] = Tile()
+                    score += newBoard[i][j].value
                 }
             }
         }
@@ -122,6 +96,7 @@ class Board(val size: Int = 4) {
     }
 
     fun printBoard() {
+        println("Score: $score")
         for (row in board) {
             println(row.joinToString(" ") { if (it.value == 0) "." else it.value.toString() })
         }
@@ -135,6 +110,7 @@ class Board(val size: Int = 4) {
                 newBoard.board[i][j] = this.board[i][j].copy()
             }
         }
+        newBoard.score = this.score
         return newBoard
     }
 
@@ -186,20 +162,48 @@ class Board(val size: Int = 4) {
         printBoard()
     }
 
-    fun refreshBoard(tempBoard: List<List<Tile>>) {
-        println("Refrescando el tablero...")
+    private fun refreshBoard(tempBoard: List<List<Tile>>) {
         for (i in board.indices) {
             for (j in board[i].indices) {
                 board[i][j] = tempBoard[i][j]
-                println("Nuevo valor: ${board[i][j].value}")
+
             }
         }
-        println("Tablero refrescado.")
     }
 
     fun toList(): List<List<Tile>> {
         return board
     }
+    fun isWon(): Boolean {
+        for (i in 0 until size) {
+            for (j in 0 until size) {
+                if (board[i][j].value == 2048) {
+                    println("HAS GANADO")
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    fun isLost(): Boolean {
+        for (i in 0 until size) {
+            for (j in 0 until size) {
+                if (board[i][j].value == 0) {
+                    return false
+                }
+                if (i < size - 1 && board[i][j].value == board[i + 1][j].value) {
+                    return false
+                }
+                if (j < size - 1 && board[i][j].value == board[i][j + 1].value) {
+                    return false
+                }
+            }
+        }
+        println("HAS PERDIDO")
+        return true
+    }
+
 
 
 }

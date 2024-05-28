@@ -9,8 +9,12 @@ class BoardService: BoardRepository {
 
     override fun save(board: Board) {
         try {
-            val ref = db.getReference("boards")
-            ref.setValue(board.toList())
+            val ref = db.getReference("main_game")
+            val mainGame = mapOf(
+                "board" to board.toList(),
+                "score" to board.score
+            )
+            ref.setValue(mainGame)
         } catch (e: Exception) {
             println("Error al guardar el tablero: ${e.message}")
         }

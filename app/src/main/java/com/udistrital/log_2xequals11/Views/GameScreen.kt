@@ -2,20 +2,20 @@ package com.udistrital.log_2xequals11.Views
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,12 +30,13 @@ import androidx.navigation.compose.rememberNavController
 import com.udistrital.log_2xequals11.Logic.Board
 import com.udistrital.log_2xequals11.Service.BoardService
 import com.udistrital.log_2xequals11.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 fun InitBoard(board:  MutableState<Board>, boardService: BoardService, context: Context){
     val newBoard = Board()
     newBoard.start()
     board.value = newBoard
-    boardService.save(board.value)
 }
 
 @SuppressLint("UnrememberedMutableState")
@@ -56,7 +57,7 @@ fun GameScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.size(50.dp))
-        HeadPage()
+        HeadPage(board)
         Spacer(modifier = Modifier.size(10.dp))
         Button(onClick = {
             val newBoard = Board()
@@ -77,12 +78,23 @@ fun GameScreen(navController: NavController) {
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun Directions(boardState: MutableState<Board>) {
     val boardService = BoardService()
     val colorBtnRose = colorResource(id = R.color.rose)
     val colorBtnHoney = colorResource(id = R.color.honeydew)
     val colorBtn = colorResource(id = R.color.almond)
+    val context = LocalContext.current
+    var showToast = mutableStateOf(false)
+    var toastMessage = mutableStateOf("")
+
+    LaunchedEffect(showToast.value) {
+        if (showToast.value) {
+            Toast.makeText(context, toastMessage.value, Toast.LENGTH_SHORT).show()
+            showToast.value = false
+        }
+    }
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -96,7 +108,13 @@ fun Directions(boardState: MutableState<Board>) {
             newBoard.moveLeft()
             boardState.value = newBoard
             boardService.save(boardState.value)
-
+                if (boardState.value.isWon()){
+                    toastMessage.value = "¡Has ganado!"
+                    showToast.value = true
+                } else if (boardState.value.isLost()){
+                    toastMessage.value = "Has perdido"
+                    showToast.value = true
+                }
         }) {
             Text("IZQUIERDA")
         }
@@ -109,6 +127,14 @@ fun Directions(boardState: MutableState<Board>) {
                 newBoard.moveUp()
                 boardState.value = newBoard
                 boardService.save(boardState.value)
+                if (boardState.value.isWon()){
+                    toastMessage.value = "¡Has ganado!"
+                    showToast.value = true
+                } else if (boardState.value.isLost()){
+                    toastMessage.value = "Has perdido"
+                    showToast.value = true
+                }
+
             },
                 colors = ButtonDefaults
                     .buttonColors(
@@ -125,6 +151,13 @@ fun Directions(boardState: MutableState<Board>) {
                 newBoard.moveDown()
                 boardState.value = newBoard
                 boardService.save(boardState.value)
+                if (boardState.value.isWon()){
+                    toastMessage.value = "¡Has ganado!"
+                    showToast.value = true
+                } else if (boardState.value.isLost()){
+                    toastMessage.value = "Has perdido"
+                    showToast.value = true
+                }
             },  colors = ButtonDefaults
                 .buttonColors(
                     containerColor = colorBtnHoney
@@ -139,6 +172,13 @@ fun Directions(boardState: MutableState<Board>) {
             newBoard.moveRight()
             boardState.value = newBoard
             boardService.save(boardState.value)
+            if (boardState.value.isWon()){
+                toastMessage.value = "¡Has ganado!"
+                showToast.value = true
+            } else if (boardState.value.isLost()){
+                toastMessage.value = "Has perdido"
+                showToast.value = true
+            }
         },
             colors = ButtonDefaults
                 .buttonColors(
@@ -193,7 +233,6 @@ fun BoardView(boardState: MutableState<Board>) {
 }
 
 
-
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun GameScreenPreview() {
@@ -204,7 +243,7 @@ fun GameScreenPreview() {
 }
 
 @Composable
-fun HeadPage(){
+fun HeadPage(boardState: MutableState<Board>) {
     Row {
         Text(
             text = "20",
@@ -228,13 +267,17 @@ fun HeadPage(){
                 )
                 .padding(10.dp)
         ) {
-            Text("0001",
+            Text(
+                "${boardState.value.score.toString().padStart(4, '0')}",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.white))
+                color = colorResource(id = R.color.white)
+            )
         }
     }
 }
+
+
 
 
 
