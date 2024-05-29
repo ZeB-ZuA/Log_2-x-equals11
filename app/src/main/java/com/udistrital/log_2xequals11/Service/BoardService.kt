@@ -1,22 +1,22 @@
 package com.udistrital.log_2xequals11.Service
 
 import com.google.firebase.database.FirebaseDatabase
-import com.udistrital.log_2xequals11.Logic.Board
-import com.udistrital.log_2xequals11.Logic.Tile
+import com.udistrital.log_2xequals11.ViewModel.BoardViewModel
+import com.udistrital.log_2xequals11.ViewModel.Tile
 import com.udistrital.log_2xequals11.Repository.BoardRepository
 
 class BoardService : BoardRepository {
     private val db = FirebaseDatabase.getInstance()
 
-    override fun save(board: Board) {
+    override fun save(boardViewModel: BoardViewModel) {
         try {
             val ref = db.getReference("main_game")
-            val boardData = board.toList().map { row ->
+            val boardData = boardViewModel.toList().map { row ->
                 row.map { it.value }
             }
             val mainGame = mapOf(
                 "board" to boardData,
-                "score" to board.score
+                "score" to boardViewModel.score
             )
             ref.setValue(mainGame).addOnSuccessListener {
                 println("Tablero guardado exitosamente")
@@ -28,7 +28,7 @@ class BoardService : BoardRepository {
         }
     }
 
-     override fun fetchBoard(callback: (Board?) -> Unit) {
+     override fun fetchBoard(callback: (BoardViewModel?) -> Unit) {
         try {
             val ref = db.getReference("main_game")
             ref.get().addOnSuccessListener { dataSnapshot ->
@@ -36,14 +36,14 @@ class BoardService : BoardRepository {
                     val mainGame = dataSnapshot.value as Map<String, Any>
                     val boardData = mainGame["board"] as List<List<Long>>
                     val score = (mainGame["score"] as Long).toInt()
-                    val board = Board()
-                    for (i in 0 until board.size) {
-                        for (j in 0 until board.size) {
-                            board.board[i][j] = Tile(boardData[i][j].toInt())
+                    val boardViewModel = BoardViewModel()
+                    for (i in 0 until boardViewModel.size) {
+                        for (j in 0 until boardViewModel.size) {
+                            boardViewModel.board[i][j] = Tile(boardData[i][j].toInt())
                         }
                     }
-                    board.score = score
-                    callback(board)
+                    boardViewModel.score = score
+                    callback(boardViewModel)
                 } else {
                     println("No se encontró ningún tablero en la base de datos.")
                     callback(null)
