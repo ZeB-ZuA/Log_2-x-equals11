@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,8 +87,8 @@ fun Directions(boardState: MutableState<Board>) {
     val colorBtnHoney = colorResource(id = R.color.honeydew)
     val colorBtn = colorResource(id = R.color.almond)
     val context = LocalContext.current
-    var showToast = mutableStateOf(false)
-    var toastMessage = mutableStateOf("")
+    val showToast = mutableStateOf(false)
+    val toastMessage = mutableStateOf("")
 
     LaunchedEffect(showToast.value) {
         if (showToast.value) {
@@ -95,6 +96,11 @@ fun Directions(boardState: MutableState<Board>) {
             showToast.value = false
         }
     }
+    if(boardState.value.isLost()){
+        Text(text = "Has perdido 🥴", color = colorResource(id = R.color.rose), fontSize = 30.sp)
+    } else if(boardState.value.isWon()){
+        Text(text = "Has ganado 🏆", color = colorResource(id = R.color.yellow), fontSize = 30.sp)
+    } else {
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -141,8 +147,6 @@ fun Directions(boardState: MutableState<Board>) {
                         containerColor = colorBtnRose
                     ) ,
                 ) {
-
-
                 Text("ARRIBA")
             }
 
@@ -163,7 +167,7 @@ fun Directions(boardState: MutableState<Board>) {
                     containerColor = colorBtnHoney
                 ) ,) {
 
-                Text("ABAJO")
+                Text("ABAJO", fontWeight = FontWeight.Bold)
             }
         }
 
@@ -187,6 +191,7 @@ fun Directions(boardState: MutableState<Board>) {
 
             Text("DERECHA")
         }
+    }
     }
 }
 
