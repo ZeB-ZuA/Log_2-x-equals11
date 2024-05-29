@@ -11,9 +11,12 @@ import com.udistrital.log_2xequals11.Views.GameScreen
 fun AppNav(){
     val navController = rememberNavController()
     val board = Board()
-    NavHost(navController = navController, startDestination = AppViews.gameScreen.route){
+    NavHost(navController = navController, startDestination = AppViews.splashScreen.route){
         composable(route= AppViews.gameScreen.route){
             GameScreen(navController = navController)
+        }
+        composable(route= AppViews.splashScreen.route){
+            SplashScreen(navController = navController)
         }
     }
 }
