@@ -1,19 +1,10 @@
-package com.udistrital.log_2xequals11.Logic
+package com.udistrital.log_2xequals11.ViewModel
 
-import android.widget.Toast
-import androidx.compose.material3.AlertDialog
-import com.google.firebase.Firebase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseException
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.database
-import com.google.firebase.database.getValue
+import androidx.lifecycle.ViewModel
 import com.udistrital.log_2xequals11.Service.BoardService
 
 
-class Board(val size: Int = 4) {
+class BoardViewModel(val size: Int = 4): ViewModel() {
     var board: MutableList<MutableList<Tile>> = MutableList(size) { MutableList(size) { Tile() } }
     var score: Int = 0
     val boardService = BoardService()
@@ -33,7 +24,7 @@ class Board(val size: Int = 4) {
     }
 
 
-    fun getFromFirebase(callback: (Board?) -> Unit) {
+    fun getFromFirebase(callback: (BoardViewModel?) -> Unit) {
         boardService.fetchBoard { board ->
             callback(board)
         }
@@ -110,15 +101,15 @@ class Board(val size: Int = 4) {
         println()
     }
 
-    fun copy(): Board {
-        val newBoard = Board()
+    fun copy(): BoardViewModel {
+        val newBoardViewModel = BoardViewModel()
         for (i in 0 until size) {
             for (j in 0 until size) {
-                newBoard.board[i][j] = this.board[i][j].copy()
+                newBoardViewModel.board[i][j] = this.board[i][j].copy()
             }
         }
-        newBoard.score = this.score
-        return newBoard
+        newBoardViewModel.score = this.score
+        return newBoardViewModel
     }
 
     fun moveLeft() {
