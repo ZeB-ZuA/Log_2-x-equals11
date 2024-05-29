@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Icon
@@ -53,17 +54,17 @@ fun SplashScreen(navController: NavController) {
 fun Splash(alpha: Float) {
     Box(
         modifier = Modifier
-            .background(Color.LightGray)
+            .background(colorResource(id = R.color.rose))
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             modifier = Modifier
                 .size(120.dp)
-                .alpha(alpha= alpha),
+                .alpha(alpha = alpha),
             imageVector = Icons.Default.AddCircle,
             contentDescription = "Logo Icon",
-            tint = Color.White
+            tint = colorResource(id = R.color.honeydew)
         )
     }
 }

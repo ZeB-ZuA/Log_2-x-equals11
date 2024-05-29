@@ -19,9 +19,4 @@ fun AppNav(){
             SplashScreen(navController = navController)
         }
     }
-    
-    
-    
-    
-    
 }
