@@ -86,16 +86,7 @@ fun Directions(boardState: MutableState<Board>) {
     val colorBtnRose = colorResource(id = R.color.rose)
     val colorBtnHoney = colorResource(id = R.color.honeydew)
     val colorBtn = colorResource(id = R.color.almond)
-    val context = LocalContext.current
-    val showToast = mutableStateOf(false)
-    val toastMessage = mutableStateOf("")
 
-    LaunchedEffect(showToast.value) {
-        if (showToast.value) {
-            Toast.makeText(context, toastMessage.value, Toast.LENGTH_SHORT).show()
-            showToast.value = false
-        }
-    }
     if(boardState.value.isLost()){
         Text(text = "Has perdido 🥴", color = colorResource(id = R.color.rose), fontSize = 30.sp)
     } else if(boardState.value.isWon()){
@@ -114,13 +105,7 @@ fun Directions(boardState: MutableState<Board>) {
             newBoard.moveLeft()
             boardState.value = newBoard
             boardService.save(boardState.value)
-                if (boardState.value.isWon()){
-                    toastMessage.value = "¡Has ganado!"
-                    showToast.value = true
-                } else if (boardState.value.isLost()){
-                    toastMessage.value = "Has perdido"
-                    showToast.value = true
-                }
+                ToastMsg(boardState)
         }) {
             Text("IZQUIERDA")
         }
@@ -133,13 +118,7 @@ fun Directions(boardState: MutableState<Board>) {
                 newBoard.moveUp()
                 boardState.value = newBoard
                 boardService.save(boardState.value)
-                if (boardState.value.isWon()){
-                    toastMessage.value = "¡Has ganado!"
-                    showToast.value = true
-                } else if (boardState.value.isLost()){
-                    toastMessage.value = "Has perdido"
-                    showToast.value = true
-                }
+                ToastMsg(boardState)
 
             },
                 colors = ButtonDefaults
@@ -155,13 +134,7 @@ fun Directions(boardState: MutableState<Board>) {
                 newBoard.moveDown()
                 boardState.value = newBoard
                 boardService.save(boardState.value)
-                if (boardState.value.isWon()){
-                    toastMessage.value = "¡Has ganado!"
-                    showToast.value = true
-                } else if (boardState.value.isLost()){
-                    toastMessage.value = "Has perdido"
-                    showToast.value = true
-                }
+                ToastMsg(boardState)
             },  colors = ButtonDefaults
                 .buttonColors(
                     containerColor = colorBtnHoney
@@ -176,13 +149,7 @@ fun Directions(boardState: MutableState<Board>) {
             newBoard.moveRight()
             boardState.value = newBoard
             boardService.save(boardState.value)
-            if (boardState.value.isWon()){
-                toastMessage.value = "¡Has ganado!"
-                showToast.value = true
-            } else if (boardState.value.isLost()){
-                toastMessage.value = "Has perdido"
-                showToast.value = true
-            }
+            ToastMsg(boardState)
         },
             colors = ButtonDefaults
                 .buttonColors(
@@ -192,6 +159,18 @@ fun Directions(boardState: MutableState<Board>) {
             Text("DERECHA")
         }
     }
+    }
+}
+
+fun ToastMsg(boardState: MutableState<Board>){
+    val showToast = mutableStateOf(false)
+    val toastMessage = mutableStateOf("")
+    if (boardState.value.isWon()){
+        toastMessage.value = "¡Has ganado!"
+        showToast.value = true
+    } else if (boardState.value.isLost()){
+        toastMessage.value = "Has perdido"
+        showToast.value = true
     }
 }
 
