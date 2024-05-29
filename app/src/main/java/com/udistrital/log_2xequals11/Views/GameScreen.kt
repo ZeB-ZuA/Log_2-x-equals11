@@ -201,13 +201,14 @@ fun BoardView(boardState: MutableState<Board>) {
                 for (tile in row) {
                     val color =  when (tile.value) {
                         0 -> R.color.alice
-                        2,64,2048 -> R.color.pale
+                        64,2048 -> R.color.honeydew
+                        2,512 -> R.color.yellow
                         4,128, 4096 -> R.color.aquamarine
-                        8,256, 8192 -> R.color.honeydew
-                        16,512,16384  -> R.color.almond
-                        32,1024 -> R.color.beige
+                        8,256, 8192 -> R.color.pale
+                        16,16384 -> R.color.blue
+                        32,1024 -> R.color.rose
 
-                        else -> R.color.rose
+                        else -> R.color.beige
                     }
 
                     Box(
