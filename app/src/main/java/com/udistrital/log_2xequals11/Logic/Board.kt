@@ -10,11 +10,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.database.getValue
+import com.udistrital.log_2xequals11.Service.BoardService
 
 
 class Board(val size: Int = 4) {
     var board: MutableList<MutableList<Tile>> = MutableList(size) { MutableList(size) { Tile() } }
     var score: Int = 0
+    val boardService = BoardService()
     init {
         
     }
@@ -31,6 +33,11 @@ class Board(val size: Int = 4) {
     }
 
 
+    fun getFromFirebase(callback: (Board?) -> Unit) {
+        boardService.fetchBoard { board ->
+            callback(board)
+        }
+    }
     private fun addNewNumber() {
         val emptyCells = mutableListOf<Pair<Int, Int>>()
         for (i in 0 until size) {

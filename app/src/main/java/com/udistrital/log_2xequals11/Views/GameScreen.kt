@@ -60,18 +60,40 @@ fun GameScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(50.dp))
         HeadPage(board)
         Spacer(modifier = Modifier.size(10.dp))
-        Button(onClick = {
-            val newBoard = Board()
-            newBoard.start()
-            board.value = newBoard
-            boardService.save(board.value)
-        },
-            colors = ButtonDefaults
-                .buttonColors(
-                    containerColor = colorBtn
-                ),) {
-            Text("RESTART")
+        Row {
+            Button(onClick = {
+                val newBoard = Board()
+                newBoard.start()
+                board.value = newBoard
+                boardService.save(board.value)
+            },
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = colorBtn
+                    ),) {
+                Text("RESTART")
+            }
+
+            Button(
+                onClick = {
+                    val newBoard = Board()
+                    newBoard.getFromFirebase { fetchedBoard ->
+                        if (fetchedBoard != null) {
+                            board.value = fetchedBoard
+                            boardService.save(board.value)
+                        } else {
+                           println("ERROR EN RECUPARAR GAMESCRENN LINE 85")
+                        }
+                    }
+                },
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = colorBtn
+                    ),) {
+                Text("💾")
+            }
         }
+
         Spacer(modifier = Modifier.size(10.dp))
         BoardView(board)
         Spacer(modifier = Modifier.size(10.dp))

@@ -5,6 +5,7 @@ import com.udistrital.log_2xequals11.Logic.Board
 interface BoardRepository {
 
     fun save(board: Board)
+    fun fetchBoard(callback: (Board?) -> Unit)
 
 
 }
